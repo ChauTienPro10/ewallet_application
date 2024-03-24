@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.AuthenticationException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,14 +18,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wallet.Entitis.BeanData;
 import com.wallet.Entitis.CustomUserDetail;
+import com.wallet.Entitis.EmailDetails;
 import com.wallet.Entitis.LoginRequest;
 import com.wallet.Entitis.LoginResponse;
 import com.wallet.Entitis.Member;
 import com.wallet.Entitis.User;
+import com.wallet.Repositories.EmailService;
 import com.wallet.Repositories.MemberRepository;
 import com.wallet.Repositories.UserRepository;
 import com.wallet.Utls.Feature;
+
+import ch.qos.logback.core.Context;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +39,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @RestController
 @RequestMapping("/test")
@@ -52,6 +62,10 @@ public class TestControler {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	
+	
+	ApplicationContext context = 
+           	 new ClassPathXmlApplicationContext(new String[] {"Spring-BeanData.xml"});
 
 	@PostMapping("/login")
 	public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest)
@@ -168,5 +182,52 @@ public class TestControler {
 			return e.toString();
 		}
 	}
+	@Autowired private EmailService emailService;
+	@PostMapping("/sendMail")
+    public String
+    sendMail()
+    {
+		EmailDetails mail=new EmailDetails("itchauduongphattien@gmail.com", "xin chao", "hello", null);
+        String status
+            = emailService.sendSimpleMail(mail);
+ 
+        return status;
+    }
+	
+	@PostMapping("/handle_forget_pass")
+	public String getNewPass(@RequestBody Map<String, String> jsonData) {
+		try {
+			String email=jsonData.get("email");
+			User user=userRepository.findByEmail(email);
+			if(user==null) {
+				return "this email not exist";
+			}
+			String code="220103";
+			EmailDetails mail=new EmailDetails(email, code, "Authenticate", null);
+	        String status
+	            = emailService.sendSimpleMail(mail);
+	        
+			BeanData beandata=(BeanData)context.getBean("BeanData");
+			beandata.setCodeChangeMail(code);
+			return "the authentication code has given to your email";
+		}catch (Exception e) {
+			return e.toString();
+		}
+		
+		
+	}
+	
+	@PostMapping("/CheckCodeMail")
+	public Boolean getsession(@RequestBody Map<String, String> jsonData) {
+			String code=jsonData.get("code");
+			BeanData beandata=(BeanData)context.getBean("BeanData");
+			if(code.equals(beandata.getCodeChangeMail())) {
+				return true;
+			}
+			return false;
+		
+	}
+	
+	
 
 }
