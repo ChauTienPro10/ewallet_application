@@ -143,9 +143,12 @@ public class TestControler {
 	public String changePass(@RequestBody Map<String, String> jsonData) {
 		try {
 			User user = userRepository.findByUsername(jsonData.get("username"));
-			if (user != null) {
+			Member member=memberRepository.findByUsername(jsonData.get("username"));
+			if (member != null && user != null) {
 				String encodedPassword = passwordEncoder.encode(jsonData.get("newPassword"));
+				member.setPassword(encodedPassword);
 				user.setPassword(encodedPassword);
+				memberRepository.save(member);
 				userRepository.save(user);
 				return "You reseted password";
 			} else {
@@ -173,7 +176,7 @@ public class TestControler {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return "Authentivate failue";
+				return "Authentivate failue";	
 			}
 			
 
