@@ -18,7 +18,7 @@ public class Card {
 	private int card_id;
 	
 	@Column(name="card_number")
-	private String card_number;
+	private String cardnumber;
 	
 	@Column(name="member_id")
 	private int memberid;
@@ -31,11 +31,11 @@ public class Card {
 	private BigDecimal balance;
 
 	public String getCard_number() {
-		return card_number;
+		return cardnumber;
 	}
 
 	public void setCard_number(String card_number) {
-		this.card_number = card_number;
+		this.cardnumber = card_number;
 	}
 
 	public int getMember_id() {
@@ -64,7 +64,7 @@ public class Card {
 
 	public Card(String card_number, int member_id, String pin, BigDecimal balance) {
 		super();
-		this.card_number = card_number;
+		this.cardnumber = card_number;
 		this.memberid = member_id;
 		this.pin = pin;
 		this.balance = balance;

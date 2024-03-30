@@ -1,11 +1,20 @@
 package com.wallet.Utls;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
+import com.google.gson.Gson;
+import com.wallet.Entitis.Deposit;
+import com.wallet.Entitis.Transaction_block;
+import com.wallet.Entitis.Transfer;
+import com.wallet.Entitis.Withdrawal;
 
 public class Feature {
 	
@@ -33,4 +42,44 @@ public class Feature {
 			return false;
 		}
 	}
+	
+	public static String getJsonObjectTranSaction(Transaction_block transaction_block) {
+    	Gson gson=new Gson();
+    	return gson.toJson(transaction_block);
+    }
+	public static String getJsonObjectDeposit(Deposit deposit) {
+    	Gson gson=new Gson();
+    	return gson.toJson(deposit);
+    }
+	public static String getJsonObjectWithdraw(Withdrawal withdraw) {
+    	Gson gson=new Gson();
+    	return gson.toJson(withdraw);
+    }
+	public static String getJsonObjectTrasfer(Transfer withdraw) {
+    	Gson gson=new Gson();
+    	return gson.toJson(withdraw);
+    }
+	
+	public static  String calculateSHA256Hash(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+
+            
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
 }

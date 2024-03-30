@@ -11,9 +11,9 @@ import javax.persistence.Table;
 @Table(name="tbl_transaction_block")
 public class Transaction_block {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	
 	@Column(name="block_id")
-	private int block_id;
+	private int blockid;
 	
 	@Column(name="hash_block")
 	private String hash_block;
@@ -34,11 +34,11 @@ public class Transaction_block {
 	private String transaction_code;
 
 	public int getBlock_id() {
-		return block_id;
+		return blockid;
 	}
 
 	public void setBlock_id(int block_id) {
-		this.block_id = block_id;
+		this.blockid = block_id;
 	}
 
 	public String getHash_block() {
@@ -89,9 +89,10 @@ public class Transaction_block {
 		this.transaction_code = transaction_code;
 	}
 
-	public Transaction_block(String hash_block, String pre_hash_block, String transaction_data, int member_id,
+	public Transaction_block(int idblock,String hash_block, String pre_hash_block, String transaction_data, int member_id,
 			int transaction_type, String transaction_code) {
 		super();
+		this.blockid=idblock;
 		this.hash_block = hash_block;
 		this.pre_hash_block = pre_hash_block;
 		this.transaction_data = transaction_data;

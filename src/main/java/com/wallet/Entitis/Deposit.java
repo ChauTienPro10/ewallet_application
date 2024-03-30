@@ -37,6 +37,15 @@ public class Deposit {
 	
 	@Column(name="note")
 	private String note;
+	
+
+	public int getDeposit_id() {
+		return deposit_id;
+	}
+
+	public void setDeposit_id(int deposit_id) {
+		this.deposit_id = deposit_id;
+	}
 
 	public String getTransaction_code() {
 		return transaction_code;
@@ -86,10 +95,10 @@ public class Deposit {
 		this.note = note;
 	}
 
-	public Deposit(int deposit_id, String transaction_code, int member_id, BigDecimal deposit_amount, Date date_time,
+	public Deposit( String transaction_code, int member_id, BigDecimal deposit_amount, Date date_time,
 			int status, String note) {
 		super();
-		this.deposit_id = deposit_id;
+		
 		this.transaction_code = transaction_code;
 		this.member_id = member_id;
 		this.deposit_amount = deposit_amount;
