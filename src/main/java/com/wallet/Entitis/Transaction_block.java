@@ -25,7 +25,7 @@ public class Transaction_block {
 	private String transaction_data;
 	
 	@Column(name="member_id")
-	private int member_id;
+	private int memberid;
 	
 	@Column(name="transaction_type")
 	private int transaction_type;
@@ -66,11 +66,11 @@ public class Transaction_block {
 	}
 
 	public int getMember_id() {
-		return member_id;
+		return memberid;
 	}
 
 	public void setMember_id(int member_id) {
-		this.member_id = member_id;
+		this.memberid = member_id;
 	}
 
 	public int getTransaction_type() {
@@ -96,7 +96,7 @@ public class Transaction_block {
 		this.hash_block = hash_block;
 		this.pre_hash_block = pre_hash_block;
 		this.transaction_data = transaction_data;
-		this.member_id = member_id;
+		this.memberid = member_id;
 		this.transaction_type = transaction_type;
 		this.transaction_code = transaction_code;
 	}

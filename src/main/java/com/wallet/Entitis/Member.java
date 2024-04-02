@@ -13,7 +13,7 @@ public class Member {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name="member_id")
-	private int member_id;
+	private int memberid;
 	
 	@Column(name="first_name")
 	private String fname;
@@ -40,11 +40,11 @@ public class Member {
 	int account_status;
 
 	public int getMember_id() {
-		return member_id;
+		return memberid;
 	}
 
 	public void setMember_id(int member_id) {
-		this.member_id = member_id;
+		this.memberid = member_id;
 	}
 
 	public String getFname() {

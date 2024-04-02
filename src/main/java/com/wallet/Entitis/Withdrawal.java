@@ -21,7 +21,7 @@ public class Withdrawal {
 	private int withdrawal_id;
 	
 	@Column(name="transaction_code")
-	private String transaction_code;
+	private String transactioncode;
 	
 	@Column(name="member_id")
 	private int member_id;
@@ -47,11 +47,11 @@ public class Withdrawal {
 	}
 
 	public String getTransaction_code() {
-		return transaction_code;
+		return transactioncode;
 	}
 
 	public void setTransaction_code(String transaction_code) {
-		this.transaction_code = transaction_code;
+		this.transactioncode = transaction_code;
 	}
 
 	public int getMember_id() {
@@ -97,7 +97,7 @@ public class Withdrawal {
 	public Withdrawal(String transaction_code, int member_id, BigDecimal amount, Date date_time, int status,
 			String comments) {
 		super();
-		this.transaction_code = transaction_code;
+		this.transactioncode = transaction_code;
 		this.member_id = member_id;
 		this.amount = amount;
 		this.date_time = date_time;

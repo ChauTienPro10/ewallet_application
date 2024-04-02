@@ -21,7 +21,7 @@ public class Deposit {
 	private int deposit_id;
 	
 	@Column(name="transaction_code")
-	private String transaction_code;
+	private String transactioncode;
 	
 	@Column(name="member_id")
 	private  int member_id;
@@ -48,11 +48,11 @@ public class Deposit {
 	}
 
 	public String getTransaction_code() {
-		return transaction_code;
+		return transactioncode;
 	}
 
 	public void setTransaction_code(String transaction_code) {
-		this.transaction_code = transaction_code;
+		this.transactioncode = transaction_code;
 	}
 
 	public int getMember_id() {
@@ -99,7 +99,7 @@ public class Deposit {
 			int status, String note) {
 		super();
 		
-		this.transaction_code = transaction_code;
+		this.transactioncode = transaction_code;
 		this.member_id = member_id;
 		this.deposit_amount = deposit_amount;
 		this.date_time = date_time;
