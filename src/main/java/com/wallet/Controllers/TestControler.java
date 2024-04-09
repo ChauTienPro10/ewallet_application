@@ -80,6 +80,15 @@ public class TestControler {
 		User us = userRepository.findByUsername(loginRequest.getUsername());
 		return new LoginResponse(jwt, authorities, authentication.getName(), us.getUser_id());
 	}
+	
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request) {
+	    
+	    SecurityContextHolder.clearContext();
+
+	    
+	    return ResponseEntity.ok().build();
+	}
 
 	@PostMapping("/register")
 	public String register(@RequestBody Map<String, String> jsonData) {

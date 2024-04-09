@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class CheckControler {
 	
 	@GetMapping("/history")
 	public java.util.List<History_tranfer> getAllTransactions(@RequestBody Map<String,String>jsonData){
+
 		List<History_tranfer> historis=new ArrayList<History_tranfer>();
 		try {
 			List<Transaction_block> trans=transactionRepository.findByMemberid(Integer.parseInt(jsonData.get("member_id")));
@@ -94,5 +96,34 @@ public class CheckControler {
 		}
 		
 		
+	}
+	
+	
+	@GetMapping("/findmember")
+	public ResponseEntity<Member> findmember(@RequestBody Map<String, String> jsonData){
+		try {
+			String infor=jsonData.get("infor_data");
+			
+			if(memberRepository.findByUsername(infor)!=null) {
+				Member mem=memberRepository.findByUsername(infor);
+				return ResponseEntity.ok(mem);
+			}
+			else if(memberRepository.findByEmail(infor)!=null) {
+				Member mem=memberRepository.findByEmail(infor);
+				return ResponseEntity.ok(mem);
+			}
+			else if(memberRepository.findByPhone(infor)!=null) {
+				Member mem=memberRepository.findByPhone(infor);
+				return ResponseEntity.ok(mem);
+			}
+			else {
+				return ResponseEntity.notFound().build();
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.notFound().build();
+		}
 	}
 }

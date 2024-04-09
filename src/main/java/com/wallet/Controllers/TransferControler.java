@@ -2,6 +2,7 @@ package com.wallet.Controllers;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -9,17 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.wallet.Entitis.Card;
 import com.wallet.Entitis.Deposit;
 import com.wallet.Entitis.Member;
 import com.wallet.Entitis.Transaction_block;
 import com.wallet.Entitis.Transfer;
+import com.wallet.Entitis.User;
 import com.wallet.Entitis.Withdrawal;
 import com.wallet.Repositories.CardRepository;
 import com.wallet.Repositories.DepositRepository;
@@ -28,6 +33,7 @@ import com.wallet.Repositories.TransactionRepository;
 import com.wallet.Repositories.TransferRepository;
 import com.wallet.Repositories.WithdrawalRepository;
 import com.wallet.Utls.Feature;
+import com.wallet.Utls.MyQr;
 import com.wallet.Utls.RandomStringExample;
 
 @RestController
@@ -236,6 +242,46 @@ public class TransferControler {
 		catch (Exception e) {
 			e.printStackTrace();
 			return e.toString();
+		}
+	}
+	
+	@PostMapping("/getQRData")
+	public String getQRdata(@RequestBody String requestBody) {
+		System.out.println("Request Body: " + requestBody);
+		return requestBody;
+	}
+	@PostMapping("/createQR")
+	public String createQR(@RequestBody Map<String,String> jsonData) {
+		try {
+		
+			BigDecimal amount=new BigDecimal(jsonData.get("amount"));
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member us = memberRepository.findByUsername(username);
+			Card card=cardRepository.findByMemberid(us.getMember_id());
+			String data=us.getFname()+" "+us.getLname()+"\n"+card.getCard_number()+"\n"+amount.toString();
+			Map<EncodeHintType, ErrorCorrectionLevel> hashMap = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
+			String charset = "UTF-8";
+			hashMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+			return MyQr.createQR(data, charset, hashMap, 200, 200);
+		}
+		catch (Exception e) {
+	
+			e.printStackTrace();
+			return "error while create QR code!";
+		}
+	}
+	
+	@PostMapping("/readQR")
+	public String readQR(@RequestBody Map<String, String> jsonData) {
+		try {
+			String data=jsonData.get("base64");
+			return MyQr.readQR(MyQr.convertBase64ToImage(data),"UTF-8");
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "error!";
 		}
 	}
 
