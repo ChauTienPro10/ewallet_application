@@ -12,9 +12,12 @@ import org.springframework.security.core.Authentication;
 
 import com.google.gson.Gson;
 import com.wallet.Entitis.Deposit;
+import com.wallet.Entitis.Recharge;
 import com.wallet.Entitis.Transaction_block;
 import com.wallet.Entitis.Transfer;
 import com.wallet.Entitis.Withdrawal;
+
+import ch.qos.logback.core.boolex.Matcher;
 
 public class Feature {
 	
@@ -59,6 +62,10 @@ public class Feature {
     	Gson gson=new Gson();
     	return gson.toJson(withdraw);
     }
+	public static String getJsonObjectRecharge(Recharge recharge) {
+    	Gson gson=new Gson();
+    	return gson.toJson(recharge);
+    }
 	
 	public static  String calculateSHA256Hash(String input) {
         try {
@@ -81,5 +88,15 @@ public class Feature {
         }
         
         return null;
+    }
+	
+	public static boolean validatePhoneNumber(String phoneNumber) {
+        // Mẫu số điện thoại: 10 chữ số bắt đầu bằng 0
+        String pattern = "^0\\d{9}$";
+        
+        Pattern regexPattern = Pattern.compile(pattern);
+        java.util.regex.Matcher matcher = regexPattern.matcher(phoneNumber);
+        
+        return matcher.matches();
     }
 }

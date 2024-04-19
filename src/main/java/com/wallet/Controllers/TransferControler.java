@@ -22,6 +22,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.wallet.Entitis.Card;
 import com.wallet.Entitis.Deposit;
 import com.wallet.Entitis.Member;
+import com.wallet.Entitis.Recharge;
 import com.wallet.Entitis.Transaction_block;
 import com.wallet.Entitis.Transfer;
 import com.wallet.Entitis.User;
@@ -29,6 +30,7 @@ import com.wallet.Entitis.Withdrawal;
 import com.wallet.Repositories.CardRepository;
 import com.wallet.Repositories.DepositRepository;
 import com.wallet.Repositories.MemberRepository;
+import com.wallet.Repositories.RechargeRepository;
 import com.wallet.Repositories.TransactionRepository;
 import com.wallet.Repositories.TransferRepository;
 import com.wallet.Repositories.WithdrawalRepository;
@@ -50,6 +52,7 @@ public class TransferControler {
 	@Autowired TransactionRepository transactionRepository;
 	
 	@Autowired TransferRepository transferRepository;
+	@Autowired RechargeRepository rechargeRepository;
 
 	
 	@Autowired
@@ -264,6 +267,7 @@ public class TransferControler {
 			String charset = "UTF-8";
 			hashMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			return MyQr.createQR(data, charset, hashMap, 200, 200);
+			
 		}
 		catch (Exception e) {
 	
@@ -284,5 +288,56 @@ public class TransferControler {
 			return "error!";
 		}
 	}
+	
+	
+	@PostMapping("/recharge_phone")
+	public String recharge_phone(@RequestBody Map<String,String>jsonData) {
+		
+		try {
+			int idmember=Integer.parseInt(jsonData.get("member_id")) ;
+			String phonne =jsonData.get("phone");
+			if(Feature.validatePhoneNumber(phonne)==false) {
+				return "this phone number is invalid!";
+			}
+			BigDecimal amount=new BigDecimal(jsonData.get("amount"));
+			if((amount.remainder(BigDecimal.valueOf(10000))).compareTo(BigDecimal.valueOf(0))!=0) {
+				return "amount is invalid";
+			}
+			
+			if(memberRepository.findByMemberid(idmember)==null) {
+				return "this member don't exist";
+			}
+			Member member=memberRepository.findByPhone(phonne);
+			Card card=cardRepository.findByMemberid(member.getMember_id());
+			if(card==null) {
+				return "this phone number have not yet active card!";
+			}
+			if(amount.compareTo(card.getBalance())>0) {
+				return "balance is not enough";
+			}
+			int stt=0;
+			String preHash=null;
+			if(transactionRepository.count()!=0) {
+				stt=(int) transactionRepository.count();
+				Transaction_block transaction= transactionRepository.findByBlockid(stt);
+				preHash=transaction.getHash_block();
+			}
+			Recharge recharge=new Recharge(RandomStringExample.create_codeTrans(),member.getMember_id(),phonne,amount,new Date(),0,"recharge to "+phonne);
+			Transaction_block newRecharge=new Transaction_block(stt+1, "", preHash, Feature.getJsonObjectRecharge(recharge), member.getMember_id(), 4, recharge.getTransactioncode());
+			//4 recharge
+			newRecharge.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectRecharge(recharge)));
+			card.setBalance(card.getBalance().subtract(amount));
+			transactionRepository.save(newRecharge);
+			rechargeRepository.save(recharge);
+			cardRepository.save(card);
+			return "you recharged "+amount+" to this phone";
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "Can't recharge to this phone!";
+		}
+	}
+	
+	
 
 }

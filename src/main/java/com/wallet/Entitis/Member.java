@@ -39,6 +39,17 @@ public class Member {
 	@Column(name="account_status")
 	int account_status;
 
+	@Column(name="avatar")
+	private String avatar;
+	
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
 	public int getMember_id() {
 		return memberid;
 	}

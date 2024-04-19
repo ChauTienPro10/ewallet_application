@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandomStringExample {
 	public static String create_codeTrans()  {
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        int length = 10;
+        int length = 20;
 
         Random random = new Random();
         StringBuilder sb = new StringBuilder();

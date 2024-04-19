@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wallet.Entitis.Deposit;
 import com.wallet.Entitis.History_tranfer;
 import com.wallet.Entitis.Member;
+import com.wallet.Entitis.Recharge;
 import com.wallet.Entitis.Transaction_block;
 import com.wallet.Entitis.Transfer;
 import com.wallet.Entitis.Withdrawal;
 import com.wallet.Repositories.DepositRepository;
 import com.wallet.Repositories.MemberRepository;
+import com.wallet.Repositories.RechargeRepository;
 import com.wallet.Repositories.TransactionRepository;
 import com.wallet.Repositories.TransferRepository;
 import com.wallet.Repositories.WithdrawalRepository;
@@ -36,6 +38,7 @@ public class CheckControler {
 	MemberRepository memberRepository;
 	@Autowired DepositRepository depositRepository;
 	@Autowired WithdrawalRepository withdrawalRepository;
+	@Autowired RechargeRepository rechargeRepository;
 	
 	@GetMapping("/history")
 	public java.util.List<History_tranfer> getAllTransactions(@RequestBody Map<String,String>jsonData){
@@ -46,7 +49,7 @@ public class CheckControler {
 			if(trans.size()>0) {
 				for (int i = 0; i < trans.size(); i++) {
 				    History_tranfer ht=new History_tranfer();
-//				    System.out.println(trans.get(i).getTransaction_code());
+
 				    if(trans.get(i).getTransaction_type()==1) {
 				    	Deposit dep=depositRepository.findByTransactioncode(trans.get(i).getTransaction_code());
 				    	if(dep!=null) {
@@ -79,7 +82,19 @@ public class CheckControler {
 					    	ht.setAmount(tran.getTransfer_amount());
 				    	}
 				    	
-				    }else {
+				    }
+				    else if(trans.get(i).getTransaction_type()==4) {
+				    	Recharge recharge=rechargeRepository.findByTransactioncode(trans.get(i).getTransaction_code());
+				    	if(recharge!=null) {
+				    		ht.setType("recharge telephone");
+				    		ht.setTime(recharge.getTime());
+					    	ht.setAmount(recharge.getAmount());
+					    	ht.setContent("You recharge "+recharge.getAmount()+ " to "+recharge.getPhone());
+				    	}
+				    	
+				    	
+				    }
+				    else {
 				    	break;
 				    }
 				    historis.add(ht);
@@ -125,5 +140,9 @@ public class CheckControler {
 			e.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
+		
 	}
+	
+	
+	
 }

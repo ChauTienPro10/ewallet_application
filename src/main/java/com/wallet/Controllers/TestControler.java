@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.Entitis.BeanData;
+import com.wallet.Entitis.Card;
 import com.wallet.Entitis.CustomUserDetail;
 import com.wallet.Entitis.EmailDetails;
 import com.wallet.Entitis.LoginRequest;
 import com.wallet.Entitis.LoginResponse;
 import com.wallet.Entitis.Member;
 import com.wallet.Entitis.User;
+import com.wallet.Repositories.CardRepository;
 import com.wallet.Repositories.EmailService;
 import com.wallet.Repositories.MemberRepository;
 import com.wallet.Repositories.UserRepository;
@@ -238,6 +240,28 @@ public class TestControler {
 			}
 			return false;
 		
+	}
+	
+	@Autowired CardRepository cardRepository;
+	@PostMapping("/authen_pincode")
+	public Boolean authen_pincode(@RequestBody Map<String, String> jsonData) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			String pincode=jsonData.get("pincode");
+			Member member=memberRepository.findByUsername(username);
+			Card card=cardRepository.findByMemberid(member.getMember_id());
+			if(card.getPin().equals(pincode)==true) {
+				return true;
+			}
+			return false;
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			
+			return false;
+		}
 	}
 	
 	

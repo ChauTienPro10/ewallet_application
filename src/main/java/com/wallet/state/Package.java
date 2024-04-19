@@ -1,11 +1,20 @@
 package com.wallet.state;
 
 public class Package {
+	private String name;
 	private PackageState state = new OrderedState();
 
     
+	
+    public String getName() {
+		return name;
+	}
 
-    public PackageState getState() {
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public PackageState getState() {
 		return state;
 	}
 
@@ -21,7 +30,7 @@ public class Package {
         state.next(this);
     }
 
-    public void printStatus() {
-        state.printStatus();
+    public String getStatus() {
+        return state.printStatus();
     }
 }

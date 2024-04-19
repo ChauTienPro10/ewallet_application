@@ -4,7 +4,7 @@ public class ReceivedState implements PackageState {
 
     @Override
     public void next(Package pkg) {
-        System.out.println("This package is already received by a client.");
+    	return;
     }
 
     @Override
@@ -13,8 +13,8 @@ public class ReceivedState implements PackageState {
     }
 
 	@Override
-	public void printStatus() {
-		 System.out.println("Package was received by client.");
+	public String printStatus() {
+		return("Package was received");
 		
 	}
 }
