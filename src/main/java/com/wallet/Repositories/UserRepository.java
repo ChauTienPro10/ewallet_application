@@ -1,8 +1,8 @@
-package com.wallet.Repositories;
+package com.wallet.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wallet.Entitis.User;
+import com.wallet.entitis.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 	User findByUsername(String username);

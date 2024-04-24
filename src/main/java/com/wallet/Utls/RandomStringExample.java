@@ -1,4 +1,4 @@
-package com.wallet.Utls;
+package com.wallet.utls;
 
 import java.util.Random;
 

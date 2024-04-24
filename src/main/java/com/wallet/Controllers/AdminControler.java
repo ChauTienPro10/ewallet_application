@@ -1,4 +1,4 @@
-package com.wallet.Controllers;
+package com.wallet.controllers;
 
 import java.util.Map;
 
@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wallet.Entitis.Card;
-import com.wallet.Entitis.Member;
-import com.wallet.Entitis.User;
-import com.wallet.Repositories.CardRepository;
-import com.wallet.Repositories.MemberRepository;
-import com.wallet.Repositories.UserRepository;
+import com.wallet.entitis.Card;
+import com.wallet.entitis.Member;
+import com.wallet.entitis.User;
+import com.wallet.repositories.CardRepository;
+import com.wallet.repositories.MemberRepository;
+import com.wallet.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/admin")

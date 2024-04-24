@@ -1,4 +1,4 @@
-package com.wallet.Entitis;
+package com.wallet.entitis;
 
 public class LoginRequest {
     private String username;

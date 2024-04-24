@@ -1,4 +1,4 @@
-package com.wallet.Controllers;
+package com.wallet.controllers;
 
 import java.util.Map;
 
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wallet.Entitis.Member;
-import com.wallet.Repositories.MemberRepository;
-import com.wallet.Utls.Feature;
+import com.wallet.entitis.Member;
+import com.wallet.repositories.MemberRepository;
+import com.wallet.utls.Feature;
 
 @RestController
 @RequestMapping("/profile")

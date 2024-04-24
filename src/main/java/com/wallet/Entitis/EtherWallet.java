@@ -1,4 +1,4 @@
-package com.wallet.Entitis;
+package com.wallet.entitis;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,12 +16,12 @@ public class EtherWallet {
 	private int id ;
 	
 	@Column(name="member_id")
-	private String memberid;
+	private int memberid;
 	
 	@Column(name="address")
 	private String address;
 	
-	@Column(name="key")
+	@Column(name="pri_key")
 	private String key;
 
 	public int getId() {
@@ -32,11 +32,11 @@ public class EtherWallet {
 		this.id = id;
 	}
 
-	public String getMemberid() {
+	public int getMemberid() {
 		return memberid;
 	}
 
-	public void setMemberid(String memberid) {
+	public void setMemberid(int memberid) {
 		this.memberid = memberid;
 	}
 
@@ -56,7 +56,7 @@ public class EtherWallet {
 		this.key = key;
 	}
 
-	public EtherWallet(String memberid, String address, String key) {
+	public EtherWallet(int memberid, String address, String key) {
 		super();
 		this.memberid = memberid;
 		this.address = address;

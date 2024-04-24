@@ -1,4 +1,4 @@
-package com.wallet.Entitis;
+package com.wallet.entitis;
 
 import java.util.List;
 

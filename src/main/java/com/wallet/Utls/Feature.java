@@ -1,4 +1,4 @@
-package com.wallet.Utls;
+package com.wallet.utls;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -11,11 +11,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import com.google.gson.Gson;
-import com.wallet.Entitis.Deposit;
-import com.wallet.Entitis.Recharge;
-import com.wallet.Entitis.Transaction_block;
-import com.wallet.Entitis.Transfer;
-import com.wallet.Entitis.Withdrawal;
+import com.wallet.entitis.Deposit;
+import com.wallet.entitis.Recharge;
+import com.wallet.entitis.Transaction_block;
+import com.wallet.entitis.Transfer;
+import com.wallet.entitis.Withdrawal;
 
 import ch.qos.logback.core.boolex.Matcher;
 

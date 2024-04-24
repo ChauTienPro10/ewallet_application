@@ -1,4 +1,4 @@
-package com.wallet.Entitis;
+package com.wallet.entitis;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,11 +8,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
-import com.wallet.Repositories.RoleRepository;
+import com.wallet.repositories.RoleRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+@SuppressWarnings("serial")
 @Data
 @AllArgsConstructor
 public class CustomUserDetail implements UserDetails {
@@ -61,7 +61,7 @@ public class CustomUserDetail implements UserDetails {
         return true;
     }
 
-	public CustomUserDetail(com.wallet.Entitis.User user) {
+	public CustomUserDetail(com.wallet.entitis.User user) {
 		super();
 		this.user = user;
 	}

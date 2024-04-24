@@ -1,7 +1,7 @@
-package com.wallet.Services;
+package com.wallet.services;
 
-import com.wallet.Entitis.EmailDetails;
-import com.wallet.Repositories.EmailService;
+import com.wallet.entitis.EmailDetails;
+import com.wallet.repositories.EmailService;
 
 import java.io.File;
 import javax.mail.MessagingException;

@@ -1,9 +1,9 @@
-package com.wallet.Repositories;
+package com.wallet.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.wallet.Entitis.Member;
+import com.wallet.entitis.Member;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {

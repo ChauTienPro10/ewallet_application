@@ -1,2 +1,6 @@
 san pham: san pham 1, trang thai hien tai: Package ordered
 
+san pham: san pham 2, trang thai hien tai: Package ordered
+
+san pham: san pham 3, trang thai hien tai: Package ordered
+

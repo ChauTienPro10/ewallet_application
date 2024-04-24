@@ -1,4 +1,4 @@
-package com.wallet.Entitis;
+package com.wallet.entitis;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

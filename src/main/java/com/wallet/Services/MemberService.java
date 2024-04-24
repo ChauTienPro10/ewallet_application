@@ -1,10 +1,10 @@
-package com.wallet.Services;
+package com.wallet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wallet.Entitis.Member;
-import com.wallet.Repositories.MemberRepository;
+
+import com.wallet.repositories.MemberRepository;
 
 @Service
 public class MemberService {

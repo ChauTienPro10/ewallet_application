@@ -109,8 +109,15 @@
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
-			<version>4.9.1</version> <!-- Replace with the desired version -->
+
 		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		
+		</dependency>
+
+	
 
 	</dependencies>
 
@@ -121,6 +128,25 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 
 			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.4.0.905</version>
+			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>sonar</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+
+			</activation>
+			<properties>
+				<sonar.host.url>http://localhost:9000</sonar.host.url>
+				<sonar.login>admin</sonar.login>
+				<sonar.password>tien22012003</sonar.password>
+			</properties>
+		</profile>
+	</profiles>
 </project>

@@ -1,4 +1,4 @@
-package com.wallet.Repositories;
+package com.wallet.repositories;
 
 
 
@@ -7,9 +7,9 @@ public interface EmailService {
 
  // Method
  // To send a simple email
- String sendSimpleMail(com.wallet.Entitis.EmailDetails details);
+ String sendSimpleMail(com.wallet.entitis.EmailDetails details);
 
  // Method
  // To send an email with attachment
- String sendMailWithAttachment(com.wallet.Entitis.EmailDetails details);
+ String sendMailWithAttachment(com.wallet.entitis.EmailDetails details);
 }

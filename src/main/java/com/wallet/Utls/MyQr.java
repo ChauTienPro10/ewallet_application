@@ -1,4 +1,4 @@
-package com.wallet.Utls;
+package com.wallet.utls;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -30,7 +30,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class MyQr {
 
-	public static String createQR(String data, String charset, Map hashMap, int height, int width)
+	public static String createQR(String data, String charset, Map<EncodeHintType,ErrorCorrectionLevel> hashMap, int height, int width)
 			throws WriterException, IOException {
 
 		BitMatrix matrix = new MultiFormatWriter().encode(new String(data.getBytes(charset), charset),

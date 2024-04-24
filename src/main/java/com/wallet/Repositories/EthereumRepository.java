@@ -1,10 +1,10 @@
-package com.wallet.Repositories;
+package com.wallet.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.wallet.Entitis.Deposit;
-import com.wallet.Entitis.EtherWallet;
+
+import com.wallet.entitis.EtherWallet;
 
 @Repository
 public interface EthereumRepository extends JpaRepository<EtherWallet, Integer>{

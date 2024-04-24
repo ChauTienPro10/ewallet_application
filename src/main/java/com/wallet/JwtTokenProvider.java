@@ -4,8 +4,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-
-import com.wallet.Entitis.CustomUserDetail;
+import com.wallet.entitis.CustomUserDetail;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;

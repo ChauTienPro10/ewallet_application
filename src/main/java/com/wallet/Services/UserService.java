@@ -1,4 +1,4 @@
-package com.wallet.Services;
+package com.wallet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,9 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.wallet.Entitis.CustomUserDetail;
-import com.wallet.Entitis.User;
-import com.wallet.Repositories.UserRepository;
+import com.wallet.entitis.CustomUserDetail;
+import com.wallet.entitis.User;
+import com.wallet.repositories.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {

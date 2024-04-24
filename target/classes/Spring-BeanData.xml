@@ -4,6 +4,6 @@
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
        <bean id="BeanData" 
-            class="com.wallet.Entitis.BeanData" />
+            class="com.wallet.entitis.BeanData" />
 		
 </beans>
