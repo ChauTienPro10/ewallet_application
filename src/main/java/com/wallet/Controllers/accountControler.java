@@ -43,6 +43,7 @@ public class accountControler {
 				return "this email not exist";
 			}
 			try {
+				@SuppressWarnings("unused")
 				Authentication authentication=authenticationManager.authenticate(
 						new UsernamePasswordAuthenticationToken(member.getUsername(),password) );
 				String newemail=jsonData.get("newemail");

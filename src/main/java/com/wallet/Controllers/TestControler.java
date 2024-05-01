@@ -254,7 +254,7 @@ public class TestControler {
 			}
 			return false;
 		} catch (Exception e) {
-			// TODO: handle exception
+
 			e.printStackTrace();
 
 			return false;
