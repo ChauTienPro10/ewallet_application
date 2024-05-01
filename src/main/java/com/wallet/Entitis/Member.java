@@ -40,13 +40,13 @@ public class Member {
 	int account_status;
 
 	@Column(name="avatar")
-	private String avatar;
+	private byte[] avatar;
 	
-	public String getAvatar() {
+	public byte[] getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(String avatar) {
+	public void setAvatar(byte[] avatar) {
 		this.avatar = avatar;
 	}
 

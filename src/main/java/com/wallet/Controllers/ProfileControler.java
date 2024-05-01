@@ -1,10 +1,12 @@
 package com.wallet.controllers;
 
+import java.util.Base64;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,24 +22,25 @@ public class ProfileControler {
 	@Autowired MemberRepository memberRepository;
 	
 	
-	@PutMapping("/change_avt")
-	public String change_avatar(@RequestBody Map<String, String> jsonData) {
+	@PostMapping("/changeAVT")
+	public String changeavt(@RequestBody Map<String, String>jsonData) {
 		try {
+			String base64=jsonData.get("base64");
+			byte[] byteArray = Base64.getDecoder().decode(base64);
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
-			Member member=memberRepository.findByUsername(username);
-			String base64=jsonData.get("base64");
-			member.setAvatar(base64);
-			memberRepository.save(member);
-			return "Profile picture has been changed";
+			Member mem=memberRepository.findByUsername(username);
+			mem.setAvatar(byteArray);
+			memberRepository.save(mem);
+			return "OK";
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			return "can not change your avatar";
+			return e.toString();
 		}
 	}
 	
-	@PutMapping("/change_email")
+	@PutMapping("/change_email") 
 	public String changeEmail(@RequestBody Map<String, String>jsonData) {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

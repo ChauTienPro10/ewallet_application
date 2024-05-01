@@ -132,7 +132,7 @@ public class TransferControler {
 	}
 
 	@GetMapping("/check_balance")
-	public String check_balance(@RequestBody Map<String, String> jsonData) {
+	public String check_balance() {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();

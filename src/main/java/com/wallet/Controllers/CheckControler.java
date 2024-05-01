@@ -1,16 +1,21 @@
 package com.wallet.controllers;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kenai.jnr.x86asm.Mem;
 import com.wallet.entitis.Deposit;
 import com.wallet.entitis.History_tranfer;
 import com.wallet.entitis.Member;
@@ -39,6 +44,8 @@ public class CheckControler {
 	@Autowired DepositRepository depositRepository;
 	@Autowired WithdrawalRepository withdrawalRepository;
 	@Autowired RechargeRepository rechargeRepository;
+	@Autowired
+	AuthenticationManager authenticationManager;
 	
 	@GetMapping("/history")
 	public List<History_tranfer> getAllTransactions(@RequestBody Map<String, String> jsonData) {
@@ -115,77 +122,7 @@ public class CheckControler {
 
 	    return null;
 	}
-//	public java.util.List<History_tranfer> getAllTransactions(@RequestBody Map<String,String>jsonData){
-//
-//		List<History_tranfer> historis=new ArrayList<History_tranfer>();
-//		try {
-//			List<Transaction_block> trans=transactionRepository.findByMemberid(Integer.parseInt(jsonData.get("member_id")));
-//			if(!trans.isEmpty()) {
-//				for (int i = 0; i < trans.size(); i++) {
-//				    History_tranfer ht=new History_tranfer();
-//
-//				    if(trans.get(i).getTransaction_type()==1) {
-//				    	Deposit dep=depositRepository.findByTransactioncode(trans.get(i).getTransaction_code());
-//				    	if(dep!=null) {
-//				    		ht.setType("deposit");					    	
-//					    	ht.setTime(dep.getDate_time());
-//					    	ht.setAmount(dep.getDeposit_amount());
-//					    	ht.setContent("You deposited "+dep.getDeposit_amount()+ " into your account");
-//				    	}
-//				    	
-//				    }
-//				    else if(trans.get(i).getTransaction_type()==2) {
-//				    	Withdrawal withdraw=withdrawalRepository.findByTransactioncode(trans.get(i).getTransaction_code());
-//				    	if(withdraw!=null) {
-//				    		ht.setType("withdraw");
-//					    	
-//					    	ht.setTime(withdraw.getDate_time());
-//					    	ht.setAmount(withdraw.getAmount());
-//					    	ht.setContent("You withdrawed "+withdraw.getAmount()+ " out your account");
-//				    	}
-//				    	
-//				    }else if(trans.get(i).getTransaction_type()==3) {
-//				    	Transfer tran=transferRepository.findByTransactioncode(trans.get(i).getTransaction_code());
-//				    	if(tran!=null) {
-//				    		ht.setType("transfer");
-//					    	
-//					    	Member mem=memberRepository.findByMemberid(tran.getReceive_id());
-//					    	ht.setReceiver(mem.getFname()+" "+mem.getLname());
-//					    	ht.setTime(tran.getDate_time());
-//					    	ht.setContent(tran.getNote());
-//					    	ht.setAmount(tran.getTransfer_amount());
-//				    	}
-//				    	
-//				    }
-//				    else if(trans.get(i).getTransaction_type()==4) {
-//				    	Recharge recharge=rechargeRepository.findByTransactioncode(trans.get(i).getTransaction_code());
-//				    	if(recharge!=null) {
-//				    		ht.setType("recharge telephone");
-//				    		ht.setTime(recharge.getTime());
-//					    	ht.setAmount(recharge.getAmount());
-//					    	ht.setContent("You recharge "+recharge.getAmount()+ " to "+recharge.getPhone());
-//				    	}
-//				    	
-//				    	
-//				    }
-//				    else {
-//				    	break;
-//				    }
-//				    historis.add(ht);
-//				    
-//				}
-//				return historis;
-//			}
-//			else return null;
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			
-//			return null;
-//		}
-//		
-//		
-//	}
+
 	
 	
 	@GetMapping("/findmember")
@@ -210,11 +147,37 @@ public class CheckControler {
 			}
 		}
 		catch (Exception e) {
-			// TODO: handle exception
+
 			e.printStackTrace();
 			return ResponseEntity.notFound().build();
 		}
 		
+	}
+	
+	@GetMapping("/getInfor")
+	public ResponseEntity<Member> getinfor(){
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member mem=memberRepository.findByUsername(username);
+			return ResponseEntity.ok(mem);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.notFound().build();
+		}
+	}
+	@GetMapping("/getAvt")
+	public String getAvt() {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member mem=memberRepository.findByUsername(username);
+			byte[] byteArr=mem.getAvatar();
+			return Base64.getEncoder().encodeToString(byteArr);
+		}
+		catch (Exception e) {
+			return e.toString();
+		}
 	}
 	
 	
