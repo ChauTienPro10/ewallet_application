@@ -134,7 +134,7 @@ public class TestControler {
 				return "password must be has lessest a higher case";
 			}
 			String hashPass = passwordEncoder.encode(password);
-			System.out.println(hashPass);
+			
 			int account_status = Integer.parseInt(jsonData.get("account_status"));
 
 			Member member = new Member(first_name, last_name, email, country, contact, username, hashPass,
