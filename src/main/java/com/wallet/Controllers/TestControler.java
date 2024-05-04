@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.EncryptionExample;
@@ -60,6 +61,7 @@ public class TestControler {
 	MemberRepository memberRepository;
 	@Autowired
 	EthereumRepository ethereumRepository;
+
 
 	@GetMapping("/hello")
 	public String getHelo() {
@@ -258,6 +260,20 @@ public class TestControler {
 			e.printStackTrace();
 
 			return false;
+		}
+	}
+	
+	@GetMapping("/getPincode")
+	public String getPin() {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member member = memberRepository.findByUsername(username);
+			Card card=cardRepository.findByMemberid(member.getMember_id());
+			return card.getPin();
+		}
+		catch (Exception e) {
+			return "can't authentication";
 		}
 	}
 
