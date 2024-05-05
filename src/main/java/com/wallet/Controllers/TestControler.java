@@ -153,49 +153,9 @@ public class TestControler {
 		}
 	}
 
-	@PostMapping("/change_password")
-	public String changePass(@RequestBody Map<String, String> jsonData) {
-		try {
-			User user = userRepository.findByUsername(jsonData.get("username"));
-			Member member = memberRepository.findByUsername(jsonData.get("username"));
-			if (member != null && user != null) {
-				String encodedPassword = passwordEncoder.encode(jsonData.get("newPassword"));
-				member.setPassword(encodedPassword);
-				user.setPassword(encodedPassword);
-				memberRepository.save(member);
-				userRepository.save(user);
-				return "You reseted password";
-			} else {
-				return "Not found username";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.toString();
-		}
+	
 
-	}
 
-	@PostMapping("/checkPassword")
-	public String checkPass(@RequestBody Map<String, String> jsonData) {
-		try {
-			String username = jsonData.get("username");
-			System.out.println(jsonData.get("password"));
-			String pass = jsonData.get("password");
-
-			try {
-				Authentication authentication = authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(username, pass));
-				return "OK";
-			} catch (Exception e) {
-				e.printStackTrace();
-				return "Authentivate failue";
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.toString();
-		}
-	}
 
 	@Autowired
 	private EmailService emailService;

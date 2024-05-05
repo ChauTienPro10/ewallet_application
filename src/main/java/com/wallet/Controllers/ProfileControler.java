@@ -87,4 +87,22 @@ public class ProfileControler {
 			return "can't change your phone";
 		}
 	}
+	@PostMapping("/change_password")
+	public String changePass(@RequestBody Map<String, String> jsonData) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member member = memberRepository.findByUsername(username);
+			if (passwordEncoder.matches(jsonData.get("password"), member.getPassword())==false) {
+				return "password is incorrect: " + passwordEncoder.encode(jsonData.get("password"));
+			}
+			String hashPass = passwordEncoder.encode(jsonData.get("newpassword"));
+			member.setPassword(hashPass);
+			memberRepository.save(member);
+			return "change password success!";
+			
+		}catch (Exception e) {
+			return "can't change your password";
+		}
+	}
 }

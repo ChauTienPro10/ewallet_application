@@ -51,8 +51,10 @@ public class CheckControler {
 	public List<History_tranfer> getAllTransactions(@RequestBody Map<String, String> jsonData) {
 	    List<History_tranfer> historis = new ArrayList<>();
 	    try {
-	        int member_id = Integer.parseInt(jsonData.get("member_id"));
-	        List<Transaction_block> trans = transactionRepository.findByMemberid(member_id);
+	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member mem=memberRepository.findByUsername(username);
+	        List<Transaction_block> trans = transactionRepository.findByMemberid(mem.getMember_id());
 
 	        for (Transaction_block transaction : trans) {
 	            History_tranfer ht = createHistoryTransfer(transaction);
