@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 				.authorizeRequests()
 
-				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll().antMatchers("/**").permitAll()
+				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll().antMatchers("/test/login").permitAll()
 //				.antMatchers("/confirm/agree","/confirm/allConfirm").hasRole("DOCTOR")
 				.anyRequest().authenticated();
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

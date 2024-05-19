@@ -119,12 +119,14 @@ public class TransferControler {
 	@PostMapping("/AcceptCard")
 	public String OpenCard(@RequestBody Map<String, String> jsonData) {
 		try {
-			int id_member = Integer.parseInt(jsonData.get("member_id"));
+			
 			Random random = new Random();
 			int randomNumber = random.nextInt(899) + 101;
 
-			Member member = memberRepository.getById(id_member);
-			Card card = new Card(String.valueOf(randomNumber) + member.getPhone(), id_member, jsonData.get("pincode"),
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member member = memberRepository.findByUsername(username);
+			Card card = new Card(String.valueOf(randomNumber) + member.getPhone(), member.getMember_id(), jsonData.get("pincode"),
 					new BigDecimal(50000));
 			cardRepository.save(card);
 			return "Activate card for this account success";

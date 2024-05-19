@@ -111,9 +111,9 @@ public class TestControler {
 //			}
 //		
 		try {
-			String first_name = jsonData.get("first_name");
-			String last_name = jsonData.get("last_name");
-			String email = jsonData.get("email_address");
+			String first_name = jsonData.get("fname");
+			String last_name = jsonData.get("lname");
+			String email = jsonData.get("email");
 			if (memberRepository.findByEmail(email) != null) {
 				return "this email has used";
 			}
@@ -122,7 +122,7 @@ public class TestControler {
 			}
 			String country = jsonData.get("country");
 
-			String contact = jsonData.get("contact_number");
+			String contact = jsonData.get("phone");
 			String username = jsonData.get("username");
 			if (memberRepository.findByUsername(username) != null) {
 				return "this username was used";
