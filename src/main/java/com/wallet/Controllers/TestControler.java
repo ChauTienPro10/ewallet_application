@@ -245,10 +245,9 @@ public class TestControler {
 			Member member = memberRepository.findByUsername(username);
 
 			String address = jsonData.get("address");
-			String password = jsonData.get("password");
+			String password = jsonData.get("pin");
 
-			authentication = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			
 			String privateKey = jsonData.get("key");
 			String hash = EncryptionExample.encryp(privateKey, password);
 			MyContractWrapper myContractWrapper = new MyContractWrapper(privateKey);

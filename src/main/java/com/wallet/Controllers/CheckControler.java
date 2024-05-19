@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,16 +49,18 @@ public class CheckControler {
 	AuthenticationManager authenticationManager;
 	
 	@GetMapping("/history")
-	public List<History_tranfer> getAllTransactions(@RequestBody Map<String, String> jsonData) {
+	public List<History_tranfer> getAllTransactions() {
 	    List<History_tranfer> historis = new ArrayList<>();
 	    try {
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 			Member mem=memberRepository.findByUsername(username);
 	        List<Transaction_block> trans = transactionRepository.findByMemberid(mem.getMember_id());
+	        int startIndex = Math.max(trans.size() - 10, 0);
+	        trans=trans.subList(startIndex, trans.size());
 
-	        for (Transaction_block transaction : trans) {
-	            History_tranfer ht = createHistoryTransfer(transaction);
+	        for (int i=trans.size()-1; i>=0;i--) {
+	            History_tranfer ht = createHistoryTransfer(trans.get(i));
 	            if (ht != null) {
 	                historis.add(ht);
 	            }
@@ -69,6 +72,29 @@ public class CheckControler {
 	        return null;
 	    }
 	}
+	@PostMapping("/findHistory")
+	public List<History_tranfer> find(@RequestBody Map<String, String>jsonData){
+		List<History_tranfer> historis = new ArrayList<>();
+		try {
+			String content=jsonData.get("content");
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
+			Member mem=memberRepository.findByUsername(username);
+	        List<Transaction_block> trans = transactionRepository.findByMemberid(mem.getMember_id());
+
+	        for (Transaction_block transaction : trans) {
+	            History_tranfer ht = createHistoryTransfer(transaction);
+	            if (ht != null && ht.getContent().contains(content)) {
+	                historis.add(ht);
+	            }
+	        }
+	        return historis.isEmpty() ? null : historis;
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+	
 	private History_tranfer createHistoryTransfer(Transaction_block transaction) {
 	    History_tranfer ht = new History_tranfer();
 	    int transactionType = transaction.getTransaction_type();
@@ -92,7 +118,7 @@ public class CheckControler {
 	                ht.setType("withdraw");
 	                ht.setTime(withdraw.getDate_time());
 	                ht.setAmount(withdraw.getAmount());
-	                ht.setContent("You withdrew " + withdraw.getAmount() + " from your account");
+	                ht.setContent("You withdraw " + withdraw.getAmount() + " from your account");
 	                return ht;
 	            }
 	            break;
@@ -127,7 +153,7 @@ public class CheckControler {
 
 	
 	
-	@GetMapping("/findmember")
+	@PostMapping("/find_member")
 	public ResponseEntity<Member> findmember(@RequestBody Map<String, String> jsonData){
 		try {
 			String infor=jsonData.get("infor_data");

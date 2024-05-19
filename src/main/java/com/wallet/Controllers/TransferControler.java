@@ -88,17 +88,22 @@ public class TransferControler {
 
 					preHash = transaction.getHash_block();
 				}
-				Deposit newDeposit = new Deposit(RandomStringExample.create_codeTrans(), id_member, amount_money,
-						new Date(), 0, "");
 
-				Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
-						Feature.getJsonObjectDeposit(newDeposit), id_member, 1, newDeposit.getTransaction_code());
-				newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+				Deposit.doTransfer(id_member, amount_money, stt, preHash, card, cardRepository, depositRepository,
+						transactionRepository);
 
-				card.setBalance(card.getBalance().add(amount_money));
-				cardRepository.save(card);
-				depositRepository.save(newDeposit);
-				transactionRepository.save(newTrans);
+//				Deposit newDeposit = new Deposit(RandomStringExample.create_codeTrans(), id_member, amount_money,
+//						new Date(), 0, "");
+//
+//				Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
+//						Feature.getJsonObjectDeposit(newDeposit), id_member, 1, newDeposit.getTransaction_code());
+//				newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+//
+//				card.setBalance(card.getBalance().add(amount_money));
+//				cardRepository.save(card);
+//				depositRepository.save(newDeposit);
+//				transactionRepository.save(newTrans);
+
 				return "you was deposit " + amount_money.toString() + " into your account";
 
 			} catch (Exception e) {
@@ -154,30 +159,36 @@ public class TransferControler {
 			Member member = memberRepository.findByUsername(username);
 
 			BigDecimal amount_money = new BigDecimal(jsonData.get("amount").replaceAll(",", ""));
-			Card card = cardRepository.findByMemberid(member.getMember_id());
-			if (card == null) {
-				return "The account has not yet activated the card ";
+
+			if (Withdrawal.dowithdraw(member, cardRepository, amount_money, transactionRepository,
+					withdrawalRepository)) {
+				return "you was withdrawal " + amount_money.toString() + " out your account";
 			}
-			if (amount_money.compareTo(card.getBalance()) > 0) {
-				return "balance is not enough";
-			}
-			int stt = 0;
-			String preHash = null;
-			if (transactionRepository.count() != 0) {
-				stt = (int) transactionRepository.count();
-				Transaction_block transaction = transactionRepository.findByBlockid(stt);
-				preHash = transaction.getHash_block();
-			}
-			Withdrawal withdrawal = new Withdrawal(RandomStringExample.create_codeTrans(), member.getMember_id(), amount_money, new Date(),
-					2, "");
-			Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
-					Feature.getJsonObjectWithdraw(withdrawal), member.getMember_id(), 2, withdrawal.getTransaction_code());
-			newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
-			card.setBalance(card.getBalance().subtract(amount_money));
-			withdrawalRepository.save(withdrawal);
-			transactionRepository.save(newTrans);
-			cardRepository.save(card);
-			return "you was withdrawal " + amount_money.toString() + " out your account";
+			return "transaction failure";
+//			Card card = cardRepository.findByMemberid(member.getMember_id());
+//			if (card == null) {
+//				return "The account has not yet activated the card ";
+//			}
+//			if (amount_money.compareTo(card.getBalance()) > 0) {
+//				return "balance is not enough";
+//			}
+//			int stt = 0;
+//			String preHash = null;
+//			if (transactionRepository.count() != 0) {
+//				stt = (int) transactionRepository.count();
+//				Transaction_block transaction = transactionRepository.findByBlockid(stt);
+//				preHash = transaction.getHash_block();
+//			}
+//			Withdrawal withdrawal = new Withdrawal(RandomStringExample.create_codeTrans(), member.getMember_id(), amount_money, new Date(),
+//					2, "");
+//			Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
+//					Feature.getJsonObjectWithdraw(withdrawal), member.getMember_id(), 2, withdrawal.getTransaction_code());
+//			newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+//			card.setBalance(card.getBalance().subtract(amount_money));
+//			withdrawalRepository.save(withdrawal);
+//			transactionRepository.save(newTrans);
+//			cardRepository.save(card);
+//			return "you was withdrawal " + amount_money.toString() + " out your account";
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,10 +199,11 @@ public class TransferControler {
 	@PostMapping("/transfer")
 	public String transfer(@RequestBody Map<String, String> jsonData) {
 		try {
-			String username = jsonData.get("username");
-			String password = jsonData.get("password");
-
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String username = authentication.getName();
 			Member member = memberRepository.findByUsername(username);
+			Member receiverMem=memberRepository.findByPhone(jsonData.get("phone"));
+
 			if (member == null) {
 				return "Didn't find user";
 			}
@@ -199,42 +211,34 @@ public class TransferControler {
 			if (sender == null) {
 				return "you have not yet active this account";
 			}
-			Card receiver = cardRepository.findByCardnumber(jsonData.get("cardnumber"));
+			Card receiver = cardRepository.findByMemberid(receiverMem.getMember_id());
 			if (receiver == null) {
 				return "Didn't find address of receiver";
 			}
-			try {
-				@SuppressWarnings("unused")
-				Authentication authentication = authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(member.getUsername(), password));
-				BigDecimal amount_money = new BigDecimal(jsonData.get("amount"));
-				if (amount_money.compareTo(sender.getBalance()) > 0) {
-					return "balance is not enough";
-				}
-				int stt = 0;
-				String preHash = null;
-				if (transactionRepository.count() != 0) {
-					stt = (int) transactionRepository.count();
-					Transaction_block transaction = transactionRepository.findByBlockid(stt);
-					preHash = transaction.getHash_block();
-				}
-				Transfer transfer = new Transfer(RandomStringExample.create_codeTrans(), member.getMember_id(),
-						receiver.getMember_id(), amount_money, new Date(), 0, jsonData.get("note"));
-				Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
-						Feature.getJsonObjectTrasfer(transfer), member.getMember_id(), 3,
-						transfer.getTransaction_code());
-				newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
-				sender.setBalance(sender.getBalance().subtract(amount_money));
-				receiver.setBalance(receiver.getBalance().add(amount_money));
-				transferRepository.save(transfer);
-				transactionRepository.save(newTrans);
-				cardRepository.save(sender);
-				cardRepository.save(receiver);
-				return "you transfered money success";
 
-			} catch (Exception e) {
-				return e.toString();
+			BigDecimal amount_money = new BigDecimal(jsonData.get("amount").replaceAll(",", ""));
+			if (amount_money.compareTo(sender.getBalance()) > 0) {
+				return "balance is not enough";
 			}
+			int stt = 0;
+			String preHash = null;
+			if (transactionRepository.count() != 0) {
+				stt = (int) transactionRepository.count();
+				Transaction_block transaction = transactionRepository.findByBlockid(stt);
+				preHash = transaction.getHash_block();
+			}
+			Transfer transfer = new Transfer(RandomStringExample.create_codeTrans(), member.getMember_id(),
+					receiver.getMember_id(), amount_money, new Date(), 0, jsonData.get("note"));
+			Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
+					Feature.getJsonObjectTrasfer(transfer), member.getMember_id(), 3, transfer.getTransaction_code());
+			newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+			sender.setBalance(sender.getBalance().subtract(amount_money));
+			receiver.setBalance(receiver.getBalance().add(amount_money));
+			transferRepository.save(transfer);
+			transactionRepository.save(newTrans);
+			cardRepository.save(sender);
+			cardRepository.save(receiver);
+			return "you transfered money success";
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -257,7 +261,7 @@ public class TransferControler {
 			String username = authentication.getName();
 			Member us = memberRepository.findByUsername(username);
 			Card card = cardRepository.findByMemberid(us.getMember_id());
-			String data = us.getFname() + " " + us.getLname() + "\n" + card.getCard_number() + "\n" + amount.toString();
+			String data = us.getFname() + " " + us.getLname() + "\n" + us.getPhone()+ "\n" + amount.toString().replaceAll("\\.", ",");
 			Map<EncodeHintType, ErrorCorrectionLevel> hashMap = new HashMap<EncodeHintType, ErrorCorrectionLevel>();
 			String charset = "UTF-8";
 			hashMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

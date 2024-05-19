@@ -4,16 +4,20 @@ import java.util.Base64;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wallet.entitis.Card;
 import com.wallet.entitis.Member;
+import com.wallet.repositories.CardRepository;
 import com.wallet.repositories.MemberRepository;
 import com.wallet.utls.Feature;
 
@@ -104,5 +108,18 @@ public class ProfileControler {
 		}catch (Exception e) {
 			return "can't change your password";
 		}
+	}
+	
+	@Autowired CardRepository cardRepository;
+	@GetMapping("/getCard")
+	public ResponseEntity<Card> getCard(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		Member member = memberRepository.findByUsername(username);
+		Card card=cardRepository.findByMemberid(member.getMember_id());
+		if(card !=null) {
+			return ResponseEntity.ok(card); 
+		}
+		return null;
 	}
 }

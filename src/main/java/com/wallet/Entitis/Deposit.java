@@ -10,6 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.wallet.repositories.CardRepository;
+import com.wallet.repositories.DepositRepository;
+import com.wallet.repositories.TransactionRepository;
+import com.wallet.utls.Feature;
+import com.wallet.utls.RandomStringExample;
+
 
 
 @Entity
@@ -110,6 +116,20 @@ public class Deposit {
 	public Deposit() {
 		super();
 	}
-	
+	public static void doTransfer(int id_member,BigDecimal amount_money,int stt,String preHash,Card card,CardRepository cardRepository,
+			DepositRepository depositRepository,TransactionRepository transactionRepository) {
+		Deposit newDeposit = new Deposit(RandomStringExample.create_codeTrans(), id_member, amount_money,
+				new Date(), 0, "");
+
+		Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
+				Feature.getJsonObjectDeposit(newDeposit), id_member, 1, newDeposit.getTransaction_code());
+		newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+
+		card.setBalance(card.getBalance().add(amount_money));
+		cardRepository.save(card);
+		depositRepository.save(newDeposit);
+		transactionRepository.save(newTrans);
+
+	}
 	
 }

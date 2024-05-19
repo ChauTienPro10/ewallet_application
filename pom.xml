@@ -104,20 +104,21 @@
 		<dependency>
 			<groupId>org.web3j</groupId>
 			<artifactId>core</artifactId>
-			<version>4.8.7</version> <!-- Replace with the desired version -->
+			<version>4.5.0</version> <!-- Replace with the desired version -->
 		</dependency>
+	
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
-
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
 		
 		</dependency>
 
-	
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+
+		</dependency>
+
 
 	</dependencies>
 

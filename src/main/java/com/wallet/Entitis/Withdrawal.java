@@ -10,6 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.wallet.repositories.CardRepository;
+import com.wallet.repositories.TransactionRepository;
+import com.wallet.repositories.WithdrawalRepository;
+import com.wallet.utls.Feature;
+import com.wallet.utls.RandomStringExample;
+
 
 
 @Entity
@@ -109,5 +115,33 @@ public class Withdrawal {
 		super();
 	}
 	
+	public static boolean dowithdraw(Member member,CardRepository cardRepository,BigDecimal amount_money,TransactionRepository transactionRepository
+			, WithdrawalRepository withdrawalRepository) {
+		Card card = cardRepository.findByMemberid(member.getMember_id());
+		if (card == null) {
+			return false;
+		}
+		if (amount_money.compareTo(card.getBalance()) > 0) {
+			return false;
+		}
+		int stt = 0;
+		String preHash = null;
+		if (transactionRepository.count() != 0) {
+			stt = (int) transactionRepository.count();
+			Transaction_block transaction = transactionRepository.findByBlockid(stt);
+			preHash = transaction.getHash_block();
+		}
+		Withdrawal withdrawal = new Withdrawal(RandomStringExample.create_codeTrans(), member.getMember_id(), amount_money, new Date(),
+				2, "");
+		Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
+				Feature.getJsonObjectWithdraw(withdrawal), member.getMember_id(), 2, withdrawal.getTransaction_code());
+		newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
+		card.setBalance(card.getBalance().subtract(amount_money));
+		withdrawalRepository.save(withdrawal);
+		transactionRepository.save(newTrans);
+		cardRepository.save(card);
+		return true;
+
+	}
 	
 }
