@@ -1,5 +1,6 @@
 package com.wallet.controllers;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Map;
 
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.entitis.Card;
+import com.wallet.entitis.EmailDetails;
 import com.wallet.entitis.Member;
+import com.wallet.entitis.User;
 import com.wallet.repositories.CardRepository;
+import com.wallet.repositories.EmailService;
 import com.wallet.repositories.MemberRepository;
+import com.wallet.repositories.UserRepository;
 import com.wallet.utls.Feature;
 
 @RestController
@@ -29,6 +34,7 @@ public class ProfileControler {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired UserRepository userRepository;
 
 	@PostMapping("/changeAVT")
 	public String changeavt(@RequestBody Map<String, String> jsonData) {
@@ -97,11 +103,14 @@ public class ProfileControler {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 			Member member = memberRepository.findByUsername(username);
+			User us=userRepository.findByEmail(member.getEmail());
 			if (passwordEncoder.matches(jsonData.get("password"), member.getPassword())==false) {
 				return "password is incorrect: " + passwordEncoder.encode(jsonData.get("password"));
 			}
 			String hashPass = passwordEncoder.encode(jsonData.get("newpassword"));
 			member.setPassword(hashPass);
+			us.setPassword(hashPass);
+			userRepository.save(us);
 			memberRepository.save(member);
 			return "change password success!";
 			
@@ -121,5 +130,37 @@ public class ProfileControler {
 			return ResponseEntity.ok(card); 
 		}
 		return null;
+	}
+	@Autowired
+	private EmailService emailService;
+	@PostMapping("/get_new_pass")
+	public String getNewPass(@RequestBody Map<String, String>jsonData) {
+			String Email=jsonData.get("email");
+			
+			Member member = memberRepository.findByEmail(Email);
+			SecureRandom secureRandom = new SecureRandom();
+	        String tempPassr = String.valueOf(100000 + secureRandom.nextInt(900000));
+			EmailDetails mail = new EmailDetails(member.getEmail(), tempPassr, "Code From MUMU", null);
+			String status = emailService.sendSimpleMail(mail);
+			member.setPassword(tempPassr);
+			memberRepository.save(member);
+			return status;
+
+	}
+	
+	@PostMapping("/authenCode_change_pass")
+	public String authen(@RequestBody Map<String, String>jsonData) {
+		String Email=jsonData.get("email");
+		Member member = memberRepository.findByEmail(Email);
+		User us=userRepository.findByEmail(Email);
+		if(member.getPassword().equals(jsonData.get("code"))) {
+			String hashPass = passwordEncoder.encode(jsonData.get("newpassword"));
+			member.setPassword(hashPass);
+			us.setPassword(hashPass);
+			memberRepository.save(member);
+			userRepository.save(us);
+			return "ok";
+		}
+		return "no";
 	}
 }
