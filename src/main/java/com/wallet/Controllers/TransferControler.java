@@ -69,47 +69,27 @@ public class TransferControler {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 			Member member = memberRepository.findByUsername(username);
-
 			int id_member = member.getMember_id();
-
 			BigDecimal amount_money = new BigDecimal(jsonData.get("amount").replaceAll(",", ""));
 			Card card = cardRepository.findByMemberid(id_member);
 			if (card == null) {
 				return "The account has not yet activated the card ";
 			}
-
 			try {
 				int stt = 0;
 				String preHash = null;
-
 				if (transactionRepository.count() != 0) {
 					stt = (int) transactionRepository.count();
 					Transaction_block transaction = transactionRepository.findByBlockid(stt);
-
 					preHash = transaction.getHash_block();
 				}
-
 				Deposit.doTransfer(id_member, amount_money, stt, preHash, card, cardRepository, depositRepository,
 						transactionRepository);
-
-//				Deposit newDeposit = new Deposit(RandomStringExample.create_codeTrans(), id_member, amount_money,
-//						new Date(), 0, "");
-//
-//				Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
-//						Feature.getJsonObjectDeposit(newDeposit), id_member, 1, newDeposit.getTransaction_code());
-//				newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
-//
-//				card.setBalance(card.getBalance().add(amount_money));
-//				cardRepository.save(card);
-//				depositRepository.save(newDeposit);
-//				transactionRepository.save(newTrans);
-
 				return "you was deposit " + amount_money.toString() + " into your account";
 
 			} catch (Exception e) {
 				return "Do not authenticate this account";
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.toString();
@@ -155,7 +135,6 @@ public class TransferControler {
 	@PostMapping("/withdrawal")
 	public String withdrawal(@RequestBody Map<String, String> jsonData) {
 		try {
-
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 			Member member = memberRepository.findByUsername(username);
@@ -167,31 +146,6 @@ public class TransferControler {
 				return "you was withdrawal " + amount_money.toString() + " out your account";
 			}
 			return "transaction failure";
-//			Card card = cardRepository.findByMemberid(member.getMember_id());
-//			if (card == null) {
-//				return "The account has not yet activated the card ";
-//			}
-//			if (amount_money.compareTo(card.getBalance()) > 0) {
-//				return "balance is not enough";
-//			}
-//			int stt = 0;
-//			String preHash = null;
-//			if (transactionRepository.count() != 0) {
-//				stt = (int) transactionRepository.count();
-//				Transaction_block transaction = transactionRepository.findByBlockid(stt);
-//				preHash = transaction.getHash_block();
-//			}
-//			Withdrawal withdrawal = new Withdrawal(RandomStringExample.create_codeTrans(), member.getMember_id(), amount_money, new Date(),
-//					2, "");
-//			Transaction_block newTrans = new Transaction_block(stt + 1, "", preHash,
-//					Feature.getJsonObjectWithdraw(withdrawal), member.getMember_id(), 2, withdrawal.getTransaction_code());
-//			newTrans.setHash_block(Feature.calculateSHA256Hash(Feature.getJsonObjectTranSaction(newTrans)));
-//			card.setBalance(card.getBalance().subtract(amount_money));
-//			withdrawalRepository.save(withdrawal);
-//			transactionRepository.save(newTrans);
-//			cardRepository.save(card);
-//			return "you was withdrawal " + amount_money.toString() + " out your account";
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.toString();

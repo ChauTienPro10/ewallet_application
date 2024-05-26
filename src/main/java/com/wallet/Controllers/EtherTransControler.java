@@ -31,6 +31,7 @@ import com.wallet.repositories.EthereumRepository;
 import com.wallet.repositories.MemberRepository;
 import com.wallet.repositories.TransactionRepository;
 import com.wallet.repositories.WithdrawalRepository;
+import com.wallet.state.CardState;
 import com.wallet.web3j.MyContractWrapper;
 
 @RestController
@@ -114,7 +115,8 @@ public class EtherTransControler {
 				if (card == null) {
 					return "The account has not yet activated the card ";
 				}
-				Deposit.doTransfer(member.getMember_id(),new BigDecimal(jsonData.get("amount").replaceAll(",", "")), stt, preHash, card, cardRepository, depositRepository, transactionRepository);
+				CardState state=member.initState();
+				state.doTransfer(member.getMember_id(),new BigDecimal(jsonData.get("amount").replaceAll(",", "")), stt, preHash, card, cardRepository, depositRepository, transactionRepository);
 	
 				return "OK";
 			}
@@ -153,8 +155,8 @@ public class EtherTransControler {
 					RemoteFunctionCall<TransactionReceipt> remoteCall 
 					= myContractWrapperAd.transferETH(etherWallet.getAddress(),BigDecimal.valueOf(amount).toBigInteger());
 					TransactionReceipt transactionReceipt = remoteCall.send();
-
-					Withdrawal.dowithdraw(member, cardRepository, new BigDecimal(jsonData.get("amount").replaceAll(",", "")), transactionRepository, withdrawalRepository);
+					CardState state=member.initState();
+					state.dowithdraw(member, cardRepository, new BigDecimal(jsonData.get("amount").replaceAll(",", "")), transactionRepository, withdrawalRepository);
 					return "OK";
 				}
 				catch (Exception e) {

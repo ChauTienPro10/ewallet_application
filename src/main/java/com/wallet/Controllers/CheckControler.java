@@ -24,6 +24,10 @@ import com.wallet.entitis.Recharge;
 import com.wallet.entitis.Transaction_block;
 import com.wallet.entitis.Transfer;
 import com.wallet.entitis.Withdrawal;
+import com.wallet.factory.DepositImpl;
+import com.wallet.factory.Transaction;
+import com.wallet.factory.TransferIml;
+import com.wallet.factory.WithdrawImpl;
 import com.wallet.repositories.DepositRepository;
 import com.wallet.repositories.MemberRepository;
 import com.wallet.repositories.RechargeRepository;
@@ -102,39 +106,50 @@ public class CheckControler {
 
 	    switch (transactionType) {
 	        case 1:
-	            Deposit dep = depositRepository.findByTransactioncode(transactionCode);
-	            if (dep != null) {
-	                ht.setType("deposit");
-	                ht.setTime(dep.getDate_time());
-	                ht.setAmount(dep.getDeposit_amount());
-	                ht.setContent("You deposited " + dep.getDeposit_amount() + " into your account");
-	                return ht;
-	            }
-	            break;
+//	            Deposit dep = depositRepository.findByTransactioncode(transactionCode);
+//	            if (dep != null) {
+//	                ht.setType("deposit");
+//	                ht.setTime(dep.getDate_time());
+//	                ht.setAmount(dep.getDeposit_amount());
+//	                ht.setContent("You deposited " + dep.getDeposit_amount() + " into your account");
+//	                return ht;
+//	            }
+	        	Transaction deposit=new DepositImpl();
+	        	deposit.get_repository(depositRepository,memberRepository);
+	        	return deposit.setHistory_transaction(transaction);
+//	            break;
 
 	        case 2:
-	            Withdrawal withdraw = withdrawalRepository.findByTransactioncode(transactionCode);
-	            if (withdraw != null) {
-	                ht.setType("withdraw");
-	                ht.setTime(withdraw.getDate_time());
-	                ht.setAmount(withdraw.getAmount());
-	                ht.setContent("You withdraw " + withdraw.getAmount() + " from your account");
-	                return ht;
-	            }
-	            break;
+//	            Withdrawal withdraw = withdrawalRepository.findByTransactioncode(transactionCode);
+//	            if (withdraw != null) {
+//	                ht.setType("withdraw");
+//	                ht.setTime(withdraw.getDate_time());
+//	                ht.setAmount(withdraw.getAmount());
+//	                ht.setContent("You withdraw " + withdraw.getAmount() + " from your account");
+//	                return ht;
+//	            }
+//	            break;
+	        	
+	        	Transaction withdraw=new WithdrawImpl();
+	        	withdraw.get_repository(withdrawalRepository, memberRepository);
+	        	return withdraw.setHistory_transaction(transaction);
+	        	
 
 	        case 3:
-	            Transfer tran = transferRepository.findByTransactioncode(transactionCode);
-	            if (tran != null) {
-	                ht.setType("transfer");
-	                Member mem = memberRepository.findByMemberid(tran.getReceive_id());
-	                ht.setReceiver(mem.getFname() + " " + mem.getLname());
-	                ht.setTime(tran.getDate_time());
-	                ht.setContent(tran.getNote());
-	                ht.setAmount(tran.getTransfer_amount());
-	                return ht;
-	            }
-	            break;
+//	            Transfer tran = transferRepository.findByTransactioncode(transactionCode);
+//	            if (tran != null) {
+//	                ht.setType("transfer");
+//	                Member mem = memberRepository.findByMemberid(tran.getReceive_id());
+//	                ht.setReceiver(mem.getFname() + " " + mem.getLname());
+//	                ht.setTime(tran.getDate_time());
+//	                ht.setContent(tran.getNote());
+//	                ht.setAmount(tran.getTransfer_amount());
+//	                return ht;
+//	            }
+//	            break;
+	        	Transaction transferImpl=new TransferIml();
+	        	transferImpl.get_repository(transferRepository, memberRepository);
+	        	return transferImpl.setHistory_transaction(transaction);
 
 	        case 4:
 	            Recharge recharge = rechargeRepository.findByTransactioncode(transactionCode);

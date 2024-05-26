@@ -9,6 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.wallet.state.ActingState;
+import com.wallet.state.BlockState;
+import com.wallet.state.CardState;
+
 @Entity
 @Table(name="tbl_card")
 public class Card {
@@ -74,6 +78,6 @@ public class Card {
 		
 	}
 	
-	
+
 	
 }

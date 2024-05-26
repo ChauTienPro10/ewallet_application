@@ -97,19 +97,7 @@ public class TestControler {
 
 	@PostMapping("/register")
 	public String register(@RequestBody Map<String, String> jsonData) {
-//		
-//		{
-//			  
-//			  "first_name": "Chau Duong Phat",
-//			  "last_name": "Tien",
-//			  "email_address": "tien1@gmail.com",
-//			  "country": "VIETNAM",
-//			  "contact_number": "0812788212",
-//			  "username": "tien2201",
-//			  "password": "Tien22012003",
-//			  "account_status": "0"
-//			}
-//		
+	
 		try {
 			String first_name = jsonData.get("fname");
 			String last_name = jsonData.get("lname");

@@ -7,6 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.wallet.state.ActingState;
+import com.wallet.state.BlockState;
+import com.wallet.state.CardState;
+
 @Entity
 @Table(name="tbl_member")
 public class Member {
@@ -140,6 +144,12 @@ public class Member {
 	}
 	
 	
+	public CardState initState() {
+		if (this.account_status == 0) {
+			return new ActingState();
+		}
+		else return new BlockState();
+	}
 	
 	
 	
