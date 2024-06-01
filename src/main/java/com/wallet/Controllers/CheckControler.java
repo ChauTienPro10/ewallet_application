@@ -2,6 +2,7 @@ package com.wallet.controllers;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,8 @@ public class CheckControler {
 	@Autowired
 	AuthenticationManager authenticationManager;
 	
+	
+	//nhan 20 giao dich gan nhat
 	@GetMapping("/history")
 	public List<History_tranfer> getAllTransactions() {
 	    List<History_tranfer> historis = new ArrayList<>();
@@ -76,6 +79,8 @@ public class CheckControler {
 	        return null;
 	    }
 	}
+	
+	// tim lich su giao dich theo tu khoa
 	@PostMapping("/findHistory")
 	public List<History_tranfer> find(@RequestBody Map<String, String>jsonData){
 		List<History_tranfer> historis = new ArrayList<>();
@@ -92,13 +97,16 @@ public class CheckControler {
 	                historis.add(ht);
 	            }
 	        }
-	        return historis.isEmpty() ? null : historis;
+	        HashSet<History_tranfer> set = new HashSet<History_tranfer>(historis);
+	        List<History_tranfer> uniqueList = new ArrayList<History_tranfer>(set);
+	        return uniqueList.isEmpty() ? null : historis;
 		}
 		catch (Exception e) {
 			return null;
 		}
 	}
 	
+	// ham khoi tao lich su giao dich
 	private History_tranfer createHistoryTransfer(Transaction_block transaction) {
 	    History_tranfer ht = new History_tranfer();
 	    int transactionType = transaction.getTransaction_type();
@@ -106,29 +114,13 @@ public class CheckControler {
 
 	    switch (transactionType) {
 	        case 1:
-//	            Deposit dep = depositRepository.findByTransactioncode(transactionCode);
-//	            if (dep != null) {
-//	                ht.setType("deposit");
-//	                ht.setTime(dep.getDate_time());
-//	                ht.setAmount(dep.getDeposit_amount());
-//	                ht.setContent("You deposited " + dep.getDeposit_amount() + " into your account");
-//	                return ht;
-//	            }
 	        	Transaction deposit=new DepositImpl();
 	        	deposit.get_repository(depositRepository,memberRepository);
 	        	return deposit.setHistory_transaction(transaction);
-//	            break;
+
 
 	        case 2:
-//	            Withdrawal withdraw = withdrawalRepository.findByTransactioncode(transactionCode);
-//	            if (withdraw != null) {
-//	                ht.setType("withdraw");
-//	                ht.setTime(withdraw.getDate_time());
-//	                ht.setAmount(withdraw.getAmount());
-//	                ht.setContent("You withdraw " + withdraw.getAmount() + " from your account");
-//	                return ht;
-//	            }
-//	            break;
+
 	        	
 	        	Transaction withdraw=new WithdrawImpl();
 	        	withdraw.get_repository(withdrawalRepository, memberRepository);
@@ -136,17 +128,7 @@ public class CheckControler {
 	        	
 
 	        case 3:
-//	            Transfer tran = transferRepository.findByTransactioncode(transactionCode);
-//	            if (tran != null) {
-//	                ht.setType("transfer");
-//	                Member mem = memberRepository.findByMemberid(tran.getReceive_id());
-//	                ht.setReceiver(mem.getFname() + " " + mem.getLname());
-//	                ht.setTime(tran.getDate_time());
-//	                ht.setContent(tran.getNote());
-//	                ht.setAmount(tran.getTransfer_amount());
-//	                return ht;
-//	            }
-//	            break;
+          
 	        	Transaction transferImpl=new TransferIml();
 	        	transferImpl.get_repository(transferRepository, memberRepository);
 	        	return transferImpl.setHistory_transaction(transaction);
@@ -167,20 +149,22 @@ public class CheckControler {
 	}
 
 	
-	
+	//tim nguoi dung theo thong tin
 	@PostMapping("/find_member")
 	public ResponseEntity<Member> findmember(@RequestBody Map<String, String> jsonData){
 		try {
 			String infor=jsonData.get("infor_data");
-			
+			// tim theo username
 			if(memberRepository.findByUsername(infor)!=null) {
 				Member mem=memberRepository.findByUsername(infor);
 				return ResponseEntity.ok(mem);
 			}
+//			tim theo email
 			else if(memberRepository.findByEmail(infor)!=null) {
 				Member mem=memberRepository.findByEmail(infor);
 				return ResponseEntity.ok(mem);
 			}
+			// tim theo so dien thoai
 			else if(memberRepository.findByPhone(infor)!=null) {
 				Member mem=memberRepository.findByPhone(infor);
 				return ResponseEntity.ok(mem);
@@ -196,7 +180,7 @@ public class CheckControler {
 		}
 		
 	}
-	
+	// nhan thong tin nguoi dung
 	@GetMapping("/getInfor")
 	public ResponseEntity<Member> getinfor(){
 		try {

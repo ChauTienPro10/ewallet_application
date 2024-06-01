@@ -73,38 +73,44 @@ public class TestControler {
 
 	ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "Spring-BeanData.xml" });
 
+	// xu ly dang nhap ben duoi
 	@PostMapping("/login")
 	public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest)
 			throws AuthenticationException {
-
+//xac thuc thong tin nguoi dung 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateToken((CustomUserDetail) authentication.getPrincipal());
+		String jwt = tokenProvider.generateToken((CustomUserDetail) authentication.getPrincipal());// tao  jwt 
 		@SuppressWarnings("unchecked")
 		List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
 		User us = userRepository.findByUsername(loginRequest.getUsername());
-		return new LoginResponse(jwt, authorities, authentication.getName(), us.getUser_id());
+		return new LoginResponse(jwt, authorities, authentication.getName(), us.getUser_id());// tra ve thong tin nguoi dung da xac thuc kem theo mot chuoi jwt
 	}
 
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletRequest request) {
 
-		SecurityContextHolder.clearContext();
+		SecurityContextHolder.clearContext();// xoa tat ca thong tin nguoi dung khoi phien hien tai
 
 		return ResponseEntity.ok().build();
 	}
 
+	// xu ly dang ky ben duoi
 	@PostMapping("/register")
 	public String register(@RequestBody Map<String, String> jsonData) {
 	
 		try {
+			// lay thong tin tu yeu cau
 			String first_name = jsonData.get("fname");
 			String last_name = jsonData.get("lname");
 			String email = jsonData.get("email");
+			
+			// kiem tra email da duoc dung hay chua
 			if (memberRepository.findByEmail(email) != null) {
 				return "this email has used";
 			}
+			// kiem tra email co hop le hay khong
 			if (Feature.isValidEmail(email) == false) {
 				return "this email invalid! Example for an email : [example123@gmail.com]";
 			}
@@ -112,10 +118,11 @@ public class TestControler {
 
 			String contact = jsonData.get("phone");
 			String username = jsonData.get("username");
+			// kiem tra username da duoc dung hay chua
 			if (memberRepository.findByUsername(username) != null) {
 				return "this username was used";
 			}
-
+// kiem tra d dai mat khau co phu hop hay khong
 			String password = jsonData.get("password");
 			if (password.length() < 6 || password.length() > 12) {
 				return "Password must be larger than 6 characters and less than 13 characters";
@@ -193,65 +200,113 @@ public class TestControler {
 
 	@PostMapping("/authen_pincode")
 	public Boolean authen_pincode(@RequestBody Map<String, String> jsonData) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String username = authentication.getName();
-			String pincode = jsonData.get("pincode");
-			Member member = memberRepository.findByUsername(username);
-			Card card = cardRepository.findByMemberid(member.getMember_id());
-			if (card.getPin().equals(pincode) == true) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-			return false;
-		}
+	    try {
+	        // Lấy thông tin xác thực hiện tại từ SecurityContextHolder
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        
+	        // Lấy tên người dùng từ thông tin xác thực
+	        String username = authentication.getName();
+	        
+	        // Lấy mã PIN từ dữ liệu JSON được gửi tới
+	        String pincode = jsonData.get("pincode");
+	        
+	        // Tìm thành viên trong cơ sở dữ liệu bằng tên người dùng
+	        Member member = memberRepository.findByUsername(username);
+	        
+	        // Tìm thẻ của thành viên bằng ID của họ
+	        Card card = cardRepository.findByMemberid(member.getMember_id());
+	        
+	        // So sánh mã PIN của thẻ với mã PIN được gửi tới
+	        if (card.getPin().equals(pincode)) {
+	            return true;
+	        }
+	        
+	        // Trả về false nếu mã PIN không khớp
+	        return false;
+	    } catch (Exception e) {
+	        // Bắt lỗi nếu có lỗi xảy ra trong quá trình thực hiện và in ra lỗi
+	        e.printStackTrace();
+	        
+	        // Trả về false nếu có lỗi xảy ra
+	        return false;
+	    }
 	}
+
 	
 	@GetMapping("/getPincode")
 	public String getPin() {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String username = authentication.getName();
-			Member member = memberRepository.findByUsername(username);
-			Card card=cardRepository.findByMemberid(member.getMember_id());
-			return card.getPin();
-		}
-		catch (Exception e) {
-			return "can't authentication";
-		}
+	    try {
+	        // Lấy thông tin xác thực hiện tại từ SecurityContextHolder
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        
+	        // Lấy tên người dùng từ thông tin xác thực
+	        String username = authentication.getName();
+	        
+	        // Tìm thành viên trong cơ sở dữ liệu bằng tên người dùng
+	        Member member = memberRepository.findByUsername(username);
+	        
+	        // Tìm thẻ (Card) của thành viên bằng ID của họ
+	        Card card = cardRepository.findByMemberid(member.getMember_id());
+	        
+	        // Trả về mã PIN của thẻ
+	        return card.getPin();
+	    } catch (Exception e) {
+	        // Bắt lỗi nếu có lỗi xảy ra trong quá trình thực hiện và trả về thông báo lỗi
+	        return "can't authenticate";
+	    }
 	}
 
-	@PostMapping("/linkWallet")
+
+	@PostMapping("/linkWallet")// xu ly lien ket vi ETH
 	public String linkToEwallet(@RequestBody Map<String, String> jsonData) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String username = authentication.getName();
-			Member member = memberRepository.findByUsername(username);
+	    try {
+	        // Lấy thông tin xác thực hiện tại từ SecurityContextHolder
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        
+	        // Lấy tên người dùng từ thông tin xác thực
+	        String username = authentication.getName();
+	        
+	        // Tìm thành viên trong cơ sở dữ liệu bằng tên người dùng
+	        Member member = memberRepository.findByUsername(username);
 
-			String address = jsonData.get("address");
-			String password = jsonData.get("pin");
+	        // Lấy địa chỉ ví Ethereum từ dữ liệu JSON
+	        String address = jsonData.get("address");
+	        
+	        // Lấy mã PIN từ dữ liệu JSON
+	        String password = jsonData.get("pin");
 
-			
-			String privateKey = jsonData.get("key");
-			String hash = EncryptionExample.encryp(privateKey, password);
-			MyContractWrapper myContractWrapper = new MyContractWrapper(privateKey);
-			if (myContractWrapper.isPrivateKeyValid(privateKey, address)) {
-				EtherWallet etherWallet = new EtherWallet(member.getMember_id(), address, hash);
-				ethereumRepository.save(etherWallet);
-				return "link success!";
-			} else {
-				return "can't  link to this address";
-			}
+	        // Lấy khóa riêng từ dữ liệu JSON
+	        String privateKey = jsonData.get("key");
+	        
+	        // Mã hóa khóa riêng bằng mật khẩu (PIN)
+	        String hash = EncryptionExample.encryp(privateKey, password); // mã hóa khóa theo mật khẩu
+	        
+	        // Tạo một instance của MyContractWrapper với khóa riêng
+	        MyContractWrapper myContractWrapper = new MyContractWrapper(privateKey);
+	        
+	        // Kiểm tra tính hợp lệ của khóa riêng và địa chỉ ví Ethereum
+	        if (myContractWrapper.isPrivateKeyValid(privateKey, address)) {
+	            // Tạo một đối tượng EtherWallet mới với thông tin của thành viên, địa chỉ và khóa đã mã hóa
+	            EtherWallet etherWallet = new EtherWallet(member.getMember_id(), address, hash);
+	            
+	            // Lưu đối tượng EtherWallet vào cơ sở dữ liệu
+	            ethereumRepository.save(etherWallet);
+	            
+	            // Trả về thông báo liên kết thành công
+	            return "link success!";
+	        } else {
+	            // Trả về thông báo nếu không thể liên kết với địa chỉ này
+	            return "can't link to this address";
+	        }
 
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			return "can't link to ETH account !";
-		}
+	    } catch (Exception e) {
+	        // Bắt lỗi nếu có lỗi xảy ra trong quá trình thực hiện và in ra lỗi
+	        e.printStackTrace();
+	        
+	        // Trả về thông báo lỗi liên kết
+	        return "can't link to ETH account!";
+	    }
 	}
+
 
 }
